@@ -29,6 +29,36 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 <br>
 `[err]` &nbsp; An error occurred, and the script was forced to terminate.
 
+### Language Guide
+#### Program Quickstart
+1. Create a new file ending with '.fur'
+2. Write your script.
+3. Run it with the interpreter (view interpreter guide above for more information).
+#### Instructions
+Each program contains a set of instructions.
+These instructions perform different actions.<br>
+Instructions can be written like so: `<opcode> <arguments>`
+
+**Example:** `pet OWO 5` *Set the MEW register to 5.*
+
+*View the opcode listing near the bottom for more information on the different types of instructions.*
+#### Comments
+Comments are lines that are skipped by the interpreter.<br>
+They are useful for documenting your code.
+
+- In an empty line: &nbsp;&nbsp;&nbsp;&nbsp;
+`; My comment`
+- After an instruction:
+`pet MEW 10; My comment`
+#### Macros
+Macros are instructions that create other instructions, 
+they are used to reduce the amount of lines in a script,
+while also having the same amount of instructions as a script without said lines.
+
+They always start with `@`, and can take a type-less value with `=`.
+
+**Example:** `@print = OwO, What's This?` *Print "OwO, What's This?" to the console.*
+
 ## To-Be-Implemented
 - **Labels**, label an instruction to give it a pounce-able name (alias for instruction pointers)
 - ~~**Constants**, use string literals as a shortcut for mass-petting (alias for per-character petting)~~
@@ -76,6 +106,11 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 10. nuz = Pop stack and set current pointer to returned pointer.
 11. pat = Skip next instruction if register is 0.
 12. yif = Terminate the program.
+```
+
+**Macros**
+```
+@print - Print a series of characters to the terminal via 'pet MEW'.
 ```
 
 ### Registers
