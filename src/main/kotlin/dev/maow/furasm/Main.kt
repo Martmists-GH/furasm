@@ -3,6 +3,7 @@ package dev.maow.furasm
 
 import dev.maow.furasm.lang.*
 import dev.maow.furasm.lang.Opcode.*
+import dev.maow.furasm.util.macro
 import dev.maow.furasm.util.scope.*
 import java.io.File
 
@@ -20,7 +21,7 @@ fun main(args: Array<String>) {
                 .filter(String::isNotBlank)
                 .filter { !it.startsWith(';') }
                 .map(String::trim)
-                .mapTo(mutableListOf(), ::instruction)
+                .flatMapTo(mutableListOf(), ::instruction)
         }
         println("[info] Running '${file.name}'")
         ExecutionScope(Program(instructions)).execute {
@@ -47,9 +48,21 @@ private fun instruction(line: String) =
     line.substringBefore(';')
         .split(whitespace)
         .run {
-            Instruction(
-                Opcode.valueOf(this[0].uppercase()),
-                drop(1).map(::argument))
+            if (line.startsWith('@'))
+                macro(line) { name, content ->
+                    when(name) {
+                        "print" -> content!!.mapTo(mutableListOf()) {
+                            Instruction(PET, listOf(
+                                argument("MEW"),
+                                argument(it.code.toString())))
+                        }
+                        else -> error("[err] Invalid macro '$name'")
+                    }
+                }
+            else
+                listOf(Instruction(
+                    Opcode.valueOf(this[0].uppercase()),
+                    drop(1).map(::argument)))
         }
 
 private fun argument(s: String) =

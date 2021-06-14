@@ -30,9 +30,11 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 `[err]` &nbsp; An error occurred, and the script was forced to terminate.
 
 ## To-Be-Implemented
-- Labels, label an instruction to give it a pounce-able name (alias for instruction pointers)
-- Constants, use string literals as a shortcut for mass-petting (alias for per-character petting)
-- BEP Meta-Register, the value of it is always the current instruction pointer
+- **Labels**, label an instruction to give it a pounce-able name (alias for instruction pointers)
+- ~~**Constants**, use string literals as a shortcut for mass-petting (alias for per-character petting)~~
+  - *Implemented as macros.*
+- **BEP Meta-Register**, the value of it is always the current instruction pointer
+- **Instruction modification instructions.**
 
 ## Specification
 **Syntax**
@@ -40,19 +42,24 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 - A newline signals an instruction's ending.
 - Comments come after a semicolon at the end of a line.
 - Int literals cannot contain any spaces in them.
+- Macros start with a '@', and are followed by their names.
+- Macro values (optional) start with '=' and are followed by *literally anything.*
+- Macro names and values are trimmed for whitespace before and after their text values.
 
 **Semantics**
 - A program starts at the first instruction (index 0); however, jumps are 1-indexed.
-- All numbers are 32-bit integers. (0..2147483647)
+- All numbers are 32-bit integers. (-2147483647 -> 2147483647)
 - Registers can be used as arguments, and if so, their value will be set/gotten.
 - Opcodes and register IDs are not case-sensitive.
 - The only other valid value are int literals.
 - Registers are initialized at 0.
+- Macros can contain any value and are processed individually.
 
 **Conventions**
 - A FurASM file ends with '.fur'
 - Opcodes should be in lowercase.
 - Register IDs should be in uppercase.
+- There should be a single space on each side of the '=' in a macro.
 
 **Opcodes**
 ```
