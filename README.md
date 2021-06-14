@@ -30,10 +30,12 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 `[err]` &nbsp; An error occurred, and the script was forced to terminate.
 
 ### Language Guide
+
 #### Program Quickstart
 1. Create a new file ending with '.fur'
 2. Write your script.
 3. Run it with the interpreter (view interpreter guide above for more information).
+
 #### Instructions
 Each program contains a set of instructions.
 These instructions perform different actions.<br>
@@ -42,6 +44,7 @@ Instructions can be written like so: `<opcode> <arguments>`
 **Example:** `pet OWO 5` *Set the MEW register to 5.*
 
 *View the opcode listing near the bottom for more information on the different types of instructions.*
+
 #### Comments
 Comments are lines that are skipped by the interpreter.<br>
 They are useful for documenting your code.
@@ -50,6 +53,7 @@ They are useful for documenting your code.
 `; My comment`
 - After an instruction:
 `pet MEW 10; My comment`
+
 #### Macros
 Macros are instructions that create other instructions, 
 they are used to reduce the amount of lines in a script,
@@ -67,7 +71,10 @@ They always start with `@`, and can take a type-less value with `=`.
 - **Instruction modification instructions.**
 
 ## Specification
-**Syntax**
+
+### Language
+
+#### Syntax
 - An instruction starts with an opcode, followed by the instruction's arguments.
 - A newline signals an instruction's ending.
 - Comments come after a semicolon at the end of a line.
@@ -76,7 +83,7 @@ They always start with `@`, and can take a type-less value with `=`.
 - Macro values (optional) start with '=' and are followed by *literally anything.*
 - Macro names and values are trimmed for whitespace before and after their text values.
 
-**Semantics**
+#### Semantics
 - A program starts at the first instruction (index 0); however, jumps are 1-indexed.
 - All numbers are 32-bit integers. (-2147483647 -> 2147483647)
 - Registers can be used as arguments, and if so, their value will be set/gotten.
@@ -85,13 +92,19 @@ They always start with `@`, and can take a type-less value with `=`.
 - Registers are initialized at 0.
 - Macros can contain any value and are processed individually.
 
-**Conventions**
+### Conventions
+This serves as the official style guide for FurASM scripts.
+
 - A FurASM file ends with '.fur'
 - Opcodes should be in lowercase.
 - Register IDs should be in uppercase.
 - There should be a single space on each side of the '=' in a macro.
 
-**Opcodes**
+### Features
+
+#### Opcodes
+Opcodes are the names of instructions.
+
 ```
 0.  pet = Set register to value.
 1.  paw = Add a register and a value together.
@@ -108,21 +121,34 @@ They always start with `@`, and can take a type-less value with `=`.
 12. yif = Terminate the program.
 ```
 
-**Macros**
+#### Macros
+Macros are interpreter metadata for condensing multiple, usually tedious, instructions down into one line.
+
 ```
 @print - Print a series of characters to the terminal via 'pet MEW'.
 ```
 
-### Registers
+### Storage
 
+#### Stack
+The stack in an interpreter stores the memory addresses for the next instruction after a 'pnc' instruction so that it may be returned to via 'nuz', 
+this allows for subroutines (low-level functions).
+
+'wig' does not store a memory address as it is used for infinite loops, which may cause a stack overflow.
+
+#### Registers
 0. OWO
 1. UWU
 2. ONO
 3. UNU
 
+#### Meta-Registers
+Meta-registers are registers that do not store a value and instead have a special effect when retrieving/storing a value.
+
 **MEW Meta-Register**
-- When setting the value of this register, it outputs the ASCII representation of that value to the terminal.
-- When using this register as an argument, it requests a number from the terminal.
+- When setting the value of this register, it outputs the ASCII representation of the value to the terminal.
+- When using this register as an argument, it requests an *optional* number from the terminal.
 
 **DMW (Direct MEW) Meta-Register**
-- When setting the value of this register, it outputs the value.
+- When setting the value of this register, it outputs the value to the terminal.
+- When using this register as an argument, it requests a *required* number from the terminal.
