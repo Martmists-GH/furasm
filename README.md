@@ -23,12 +23,6 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 <br>
 `furasm "scripts/HelloWorld.fur" "scripts/Math.fur"`
 
-**Interpreter console**
-<br>
-`[info]` Info about what the interpreter is doing, such as starting a new program.
-<br>
-`[err]` &nbsp; An error occurred, and the script was forced to terminate.
-
 ### Language Guide
 
 #### Program Quickstart

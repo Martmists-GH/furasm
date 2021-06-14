@@ -23,7 +23,6 @@ fun main(args: Array<String>) {
                 .map(String::trim)
                 .flatMapTo(mutableListOf(), ::instruction)
         }
-        println("[info] Running '${file.name}'")
         ExecutionScope(Program(instructions)).execute {
             when(instruction.opcode) {
                 PET -> set { value }

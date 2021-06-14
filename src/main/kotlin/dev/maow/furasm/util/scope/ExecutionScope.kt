@@ -24,6 +24,5 @@ class ExecutionScope(private val program: Program) {
             scope.init()
             scope = next()
         }
-        println("[info] Program terminated")
     }
 }
