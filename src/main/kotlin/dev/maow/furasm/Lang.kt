@@ -17,11 +17,11 @@ class Instruction(val opcode: Opcode,
 
 enum class Opcode(val arguments: Int) {
     PET(2),
-    PAW(3),
-    BOP(3),
-    LIK(3),
-    KIS(3),
-    BTE(3),
+    PAW(2),
+    BOP(2),
+    LIK(2),
+    KIS(2),
+    BTE(2),
     CYT(3),
     WAG(3),
     PNC(1),
@@ -44,5 +44,13 @@ class MewRegister : Register() {
         set(value) {
             field = value
             print(value.toChar())
+        }
+}
+
+class DmwRegister : Register() {
+    override var value = 0
+        set(value) {
+            field = value
+            print(value)
         }
 }

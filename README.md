@@ -1,5 +1,8 @@
 ![FurASM](https://raw.githubusercontent.com/MaowImpl/furasm/master/furasm.png)
-<!-- Add shield.io tags here later -->
+
+[![License](https://img.shields.io/github/license/maowimpl/furasm?style=flat-square)](https://github.com/MaowImpl/furasm/blob/master/LICENSE)
+[![Version](https://img.shields.io/github/v/release/maowimpl/furasm?style=flat-square)](https://github.com/MaowImpl/furasm/releases)
+
 > A furry-themed assembly language and interpreter written in Kotlin.
 > 
 > **Inspired by [Furcode](https://github.com/sparksammy/FurcodeJS/), the [Synacor challenge](https://challenge.synacor.com/), and JVM bytecode.**
@@ -54,11 +57,11 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 **Opcodes**
 ```
 0.  pet = Set register to value.
-1.  paw = Set register to the sum of two values.
-2.  bop = Set register to the difference of two values.
-3.  lik = Set register to the product of two values.
-4.  kis = Set register to the quotient of two values.
-5.  bte = Set register to the remainder of the two values.
+1.  paw = Add a register and a value together.
+2.  bop = Subtract a register and a value.
+3.  lik = Multiply a register with a value.
+4.  kis = Divide a register with a value.
+5.  bte = Get the remainder of a register and a value.
 6.  cyt = Set register to 0 if value 1 is greater than value 2.
 7.  wag = Set register to 0 if value 1 is equal to value 2.
 8.  pnc = Jump to instruction and push the pointer of the next instruction to stack.
@@ -77,4 +80,7 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 
 **MEW Meta-Register**
 - When setting the value of this register, it outputs the ASCII representation of that value to the terminal.
-- When using this register as an argument, it requests an ASCII character from the terminal.
+- When using this register as an argument, it requests a number from the terminal.
+
+**DMW (Direct MEW) Meta-Register**
+- When setting the value of this register, it outputs the value.

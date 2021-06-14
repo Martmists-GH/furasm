@@ -6,8 +6,11 @@ import java.io.File
 
 fun main(args: Array<String>) {
     if (args.isEmpty())
-        error("[err] No '.fur' files specified.")
+        error("[err] No '.fur' files specified")
     args.map(::File).forEach { file ->
+        require(file.exists()) {
+            "[err] Specified file '${file.name}' does not exist"
+        }
         val instructions = file.useLines { lines ->
             lines
                 .map(String::trim)
@@ -38,13 +41,14 @@ class Program(private val instructions: List<Instruction>) {
         "ONO" to Register(),
         "UNU" to Register(),
 
-        "MEW" to MewRegister()
+        "MEW" to MewRegister(),
+        "DMW" to DmwRegister()
     )
     private val stack = ArrayDeque<Int>()
 
     fun next() {
         if (pointer == -1) {
-            println("[info] Program terminated.")
+            println("[info] Program terminated")
             return
         }
         with(instructions[pointer]) {
@@ -60,12 +64,15 @@ class Program(private val instructions: List<Instruction>) {
     private fun execute(instruction: Instruction) =
         with(instruction) {
             when (opcode) {
-                PET -> set { value() }
-                PAW -> set { value() + value() }
-                BOP -> set { value() - value() }
-                LIK -> set { value() * value() }
-                KIS -> set { value() / value() }
-                BTE -> set { value() % value() }
+                PET -> {
+                    register().value = value()
+                    pointer++
+                }
+                PAW -> set { it + value() }
+                BOP -> set { it - value() }
+                LIK -> set { it * value() }
+                KIS -> set { it / value() }
+                BTE -> set { it % value() }
                 CYT -> comp { value() > value() }
                 WAG -> comp { value() == value() }
                 PNC -> {
@@ -86,7 +93,7 @@ class Program(private val instructions: List<Instruction>) {
     private fun register(argument: String) = argument
         .run {
             requireNotNull(registers[this]) {
-                "[err] Not a valid register: $this"
+                "[err] '$this' is not a valid register"
             }
         }
 
@@ -97,8 +104,9 @@ class Program(private val instructions: List<Instruction>) {
             toIntOrNull() ?: register(this).value
         }
 
-    private inline fun Instruction.set(block: () -> Int) {
-        register().value = block()
+    private inline fun Instruction.set(block: (Int) -> Int) {
+        val register = register()
+        register.value = block(register.value)
         pointer++
     }
 
