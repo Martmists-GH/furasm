@@ -1,0 +1,23 @@
+; PAT, PNC, NUZ, and MEW (input) Test
+pet ONO MEW
+pat ONO
+pnc 4
+yif
+pet MEW 79
+pet MEW 119
+pet MEW 79
+pet MEW 32
+pet MEW 87
+pet MEW 104
+pet MEW 97
+pet MEW 116
+pet MEW 39
+pet MEW 115
+pet MEW 32
+pet MEW 84
+pet MEW 104
+pet MEW 105
+pet MEW 115
+pet MEW 63
+pet MEW 10
+nuz
