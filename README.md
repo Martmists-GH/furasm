@@ -42,7 +42,7 @@ This implementation of the FurASM interpreter contains a `scripts` folder which 
 - Int literals cannot contain any spaces in them.
 
 **Semantics**
-- A program starts at the first instruction (index 0).
+- A program starts at the first instruction (index 0); however, jumps are 1-indexed.
 - All numbers are 32-bit integers. (0..2147483647)
 - Registers can be used as arguments, and if so, their value will be set/gotten.
 - Opcodes and register IDs are not case-sensitive.

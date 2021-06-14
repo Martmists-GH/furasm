@@ -1,8 +1,12 @@
 @file:JvmName("Main")
 package dev.maow.furasm
 
-import dev.maow.furasm.Opcode.*
+import dev.maow.furasm.lang.*
+import dev.maow.furasm.lang.Opcode.*
+import dev.maow.furasm.util.scope.*
 import java.io.File
+
+private val whitespace = Regex("\\s+")
 
 fun main(args: Array<String>) {
     if (args.isEmpty())
@@ -13,105 +17,43 @@ fun main(args: Array<String>) {
         }
         val instructions = file.useLines { lines ->
             lines
-                .map(String::trim)
                 .filter(String::isNotBlank)
                 .filter { !it.startsWith(';') }
-                .mapTo(mutableListOf()) { line ->
-                    clean(line)
-                        .split(Regex("\\s+"))
-                        .run { Instruction(Opcode(first()), drop(1)) }
-                }
+                .map(String::trim)
+                .mapTo(mutableListOf(), ::instruction)
         }
         println("[info] Running '${file.name}'")
-        Program(instructions).next()
-    }
-}
-
-private fun clean(line: String) =
-    if (line.contains(';'))
-        line.substring(0 until line.indexOf(';'))
-    else
-        line
-
-class Program(private val instructions: List<Instruction>) {
-    private var pointer = 0
-    private val registers = mapOf(
-        "OWO" to Register(),
-        "UWU" to Register(),
-        "ONO" to Register(),
-        "UNU" to Register(),
-
-        "MEW" to MewRegister(),
-        "DMW" to DmwRegister()
-    )
-    private val stack = ArrayDeque<Int>()
-
-    fun next() {
-        if (pointer == -1) {
-            println("[info] Program terminated")
-            return
-        }
-        with(instructions[pointer]) {
-            require(opcode.arguments == arguments.size) {
-                "[err] Incorrect argument size for opcode $opcode\nEXPECTED: ${opcode.arguments} | ACTUAL: ${arguments.size}"
-            }
-            execute(this)
-            reset()
-            next()
-        }
-    }
-
-    private fun execute(instruction: Instruction) =
-        with(instruction) {
-            when (opcode) {
-                PET -> {
-                    register().value = value()
-                    pointer++
-                }
-                PAW -> set { it + value() }
-                BOP -> set { it - value() }
-                LIK -> set { it * value() }
-                KIS -> set { it / value() }
-                BTE -> set { it % value() }
-                CYT -> comp { value() > value() }
-                WAG -> comp { value() == value() }
-                PNC -> {
-                    stack.addLast(pointer + 1)
-                    pointer = value()
-                }
-                WIG -> pointer = value()
-                NUZ -> pointer = stack.removeLast()
-                PAT -> {
-                    if (register().value == 0)
-                        pointer++
-                    pointer++
-                }
+        ExecutionScope(Program(instructions)).execute {
+            when(instruction.opcode) {
+                PET -> set { value }
+                PAW -> calc { it + value }
+                BOP -> calc { it - value }
+                LIK -> calc { it * value }
+                KIS -> calc { it / value }
+                BTE -> calc { it % value }
+                CYT -> comp(::isGreater)
+                WAG -> comp(::isEqual)
+                PNC -> { push(pointer++); jump(value - 1) }
+                WIG -> jump(value)
+                NUZ -> jump(pop())
+                PAT -> branch(::isZero) { pointer++ }
                 YIF -> pointer = -1
             }
         }
-
-    private fun register(argument: String) = argument
-        .run {
-            requireNotNull(registers[this]) {
-                "[err] '$this' is not a valid register"
-            }
-        }
-
-    private fun Instruction.register() = register(argument())
-
-    private fun Instruction.value() = argument()
-        .run {
-            toIntOrNull() ?: register(this).value
-        }
-
-    private inline fun Instruction.set(block: (Int) -> Int) {
-        val register = register()
-        register.value = block(register.value)
-        pointer++
-    }
-
-    private inline fun Instruction.comp(block: () -> Boolean) {
-        if (block()) register().value = 0
-        pointer++
     }
 }
+
+private fun instruction(line: String) =
+    line.substringBefore(';')
+        .split(whitespace)
+        .run {
+            Instruction(
+                Opcode.valueOf(this[0].uppercase()),
+                drop(1).map(::argument))
+        }
+
+private fun argument(s: String) =
+    Argument(s, when {
+        s.toIntOrNull() != null  -> Argument.Type.INT
+        else                     -> Argument.Type.REGISTER
+    })
